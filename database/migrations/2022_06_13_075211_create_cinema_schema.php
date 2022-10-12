@@ -34,9 +34,81 @@ class CreateCinemaSchema extends Migration
      * As a user I want to know where I'm sitting on my ticket
      * As a cinema owner I dont want to configure the seating for every show
      */
+
+
+    /*
+     * Task 4 completed
+     */
     public function up()
     {
-        throw new \Exception('implement in coding task 4, you can ignore this exception if you are just running the initial migrations.');
+
+        /*
+         * Movies Schema
+         */
+        Schema::create('movies', function(Blueprint $table)
+        {
+            $table->id();
+            $table->string('name');
+        });
+
+
+        /*
+        * ShowRoom Schema
+        */
+        Schema::create('show_rooms', function(Blueprint $table)
+        {
+            $table->id();
+            $table->string('name');
+        });
+
+        /*
+         * Shows Schema
+         * Show status refers to that weather a show is booked or running or close e.tc
+         */
+        Schema::create('shows', function(Blueprint $table)
+        {
+            $table->id();
+            $table->dateTime('start_at');
+            $table->dateTime('end_at');
+            $table->string('show_status');
+            $table->bigInteger('show_room_id')->unsigned()->index()->nullable();;
+            $table->foreign('show_room_id')
+                ->references('id')
+                ->on('show_rooms');
+            $table->string('standard_price');
+            $table->bigInteger('movie_id')->unsigned()->index()->nullable();;
+            $table->foreign('movie_id')
+                ->references('id')
+                ->on('movies');
+            $table->timestamps();
+
+        });
+
+        /*
+         * Seating Schema
+         * Seat Type refers to as seat/couple seat/super vip/whatever
+         * Seat Status refers to as occupied or empty
+         * Assigned user id will be null once the seat is empty
+         * Unique seat number can be referred to as ticket number
+        */
+
+        Schema::create('seating', function(Blueprint $table)
+        {
+            $table->id();
+            $table->string('unique_seat_number');
+            $table->string('seat_type');
+            $table->float('percentage_premium');
+            $table->string('status');
+            $table->bigInteger('show_room_id')->unsigned()->index()->nullable();;
+            $table->foreign('show_room_id')
+                ->references('id')
+                ->on('show_rooms');
+            $table->integer('assigned_user_id');
+
+        });
+
+
+        // throw new \Exception('implement in coding task 4, you can ignore this exception if you are just running the initial migrations.');
     }
 
     /**
