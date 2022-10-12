@@ -2,12 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Event;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Foundation\Bus\DispatchesJobs;
-use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Support\Facades\Date;
 
 class EventsController extends BaseController
 {
@@ -108,7 +105,7 @@ class EventsController extends BaseController
         $eventsWithWorkShops = Event::with('workshops')->get();
 
         $events = [] ;
-        
+
         foreach ($eventsWithWorkShops as $eventWithWorkShop){
 
             $workshops = $eventWithWorkShop->workshops();
@@ -196,7 +193,37 @@ class EventsController extends BaseController
     ```
      */
 
+    /*
+      *  Second Task Completed
+      */
+
     public function getFutureEventsWithWorkshops() {
-        throw new \Exception('implement in coding task 2');
+
+        $futureEventWithWorkShops = Event::with('workshops')->get();
+
+        $events = [] ;
+
+        foreach ($futureEventWithWorkShops as $futureEventWithWorkShop){
+
+            $workshops = $futureEventWithWorkShop->workshops();
+
+            if($workshops->first()){
+
+                $startDate = Carbon::parse($workshops->first()->start);
+
+                if($startDate > Carbon::now()){
+
+                    $futureEventWithWorkShop['workshops'] = $workshops;
+
+                    $events[] = $futureEventWithWorkShop;
+
+                }
+            }
+
+        }
+
+        return response()->json($events);
+
+        // throw new \Exception('implement in coding task 2');
     }
 }
